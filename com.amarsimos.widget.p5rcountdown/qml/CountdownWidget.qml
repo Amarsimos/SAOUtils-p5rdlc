@@ -25,6 +25,7 @@ T.Widget {
     property string bottomText: widget.settings.bottomText ?? qsTr("盗取GP的心")
     property var targetDate: widget.settings.targetDate ? new Date(widget.settings.targetDate) : new Date(Date.now() + 3 * 24 * 60 * 60 * 1000)
     property int daysRemaining: calculateDaysRemaining()
+    readonly property real uiScale: 2
 
     function calculateDaysRemaining() {
         const today = new Date();
@@ -48,8 +49,8 @@ T.Widget {
     solid: false
     resizable: false
     editing: dialog.active
-    implicitWidth: mainLayout.width
-    implicitHeight: mainLayout.height
+    implicitWidth: mainLayout.width * uiScale
+    implicitHeight: mainLayout.height * uiScale
     layer.enabled: true
 
     FontLoader {
@@ -91,12 +92,15 @@ T.Widget {
     // Main Content Container
     Item {
         // 1. Content Wrapper (Source for Shader - Contains only Text)
+        // 不再参考 contentWrapper.height，因为它包含为了 Shader 防裁切而设置的大量填充
 
         id: mainLayout
 
+        scale: uiScale
         width: contentWrapper.width - 10
-        height: Math.max(contentWrapper.height, bottomRect.y + bottomRect.height + 10)
-        anchors.centerIn: parent
+        height: contentWrapper.height
+        anchors.top: parent.top
+        anchors.horizontalCenter: parent.horizontalCenter
         anchors.horizontalCenterOffset: 25
 
         Item {
@@ -104,6 +108,7 @@ T.Widget {
 
             z: -1
             width: mainRow.width + 100
+            // 增加高度缓冲以防止旋转后的文本被裁切
             height: mainRow.height + 40
             anchors.horizontalCenter: parent.horizontalCenter
 
@@ -124,7 +129,6 @@ T.Widget {
                         text: qsTr("距离")
                         font.family: customFont.name
                         font.pixelSize: 16
-                        font.bold: true
                         color: "#ff0000"
                         rotation: -17
                         anchors.bottom: eventTextRow.top
@@ -165,7 +169,6 @@ T.Widget {
                                     text: modelData
                                     font.family: customFont.name
                                     font.pixelSize: 40
-                                    font.bold: true
                                     color: "#ff0000"
                                     styleColor: "black"
                                     anchors.centerIn: parent
@@ -247,7 +250,6 @@ T.Widget {
                     text: qsTr("日")
                     font.family: customFont.name
                     font.pixelSize: 24
-                    font.bold: true
                     color: "#ff0000"
                     rotation: -18
                     anchors.bottom: parent.bottom
@@ -263,11 +265,16 @@ T.Widget {
 
             sourceItem: contentWrapper
             visible: false
+            // 关键：生成 2x 分辨率的高清纹理，配合 uiScale 实现抗锯齿
+            textureSize: Qt.size(contentWrapper.width * uiScale, contentWrapper.height * uiScale)
         }
 
         ShaderEffect {
             property variant source: effectSource
-            property point delta: Qt.point(1 / width, 1 / height)
+            // 根据高清纹理尺寸计算采样步长
+            property point delta: Qt.point(1 / (contentWrapper.width * uiScale), 1 / (contentWrapper.height * uiScale))
+            // 传递描边半径 (2x 分辨率下设为 20.0 以获得更粗的视觉效果)
+            property real radius: 18
 
             anchors.fill: contentWrapper
             z: -3
@@ -279,19 +286,46 @@ T.Widget {
             id: bottomRect
 
             width: mainRow.width
-            height: 25
-            color: "#ff0000"
-            anchors.top: contentWrapper.bottom
-            anchors.topMargin: -15
+            height: 20
+            color: "#ff0000" // 恢复为普通矩形
+            // 修复分离问题：不再锚定于 contentWrapper.bottom (受宽度影响大)，
+            // 而是锚定于 contentWrapper.verticalCenter，保持相对位置恒定。
+            anchors.top: contentWrapper.verticalCenter
+            anchors.topMargin: 47 // 基于 mainRow 高度估算的偏移量 (约半高 + 间距)
             anchors.horizontalCenter: contentWrapper.horizontalCenter
             anchors.horizontalCenterOffset: -25
             z: 0
 
+            // 叠加遮罩：在左侧绘制黑色形状以形成“内凹”
+            Canvas {
+                id: leftMask
+
+                width: 15 // 遮罩区域宽度
+                height: parent.height
+                anchors.left: parent.left
+                anchors.top: parent.top
+                onPaint: {
+                    var ctx = getContext("2d");
+                    ctx.clearRect(0, 0, width, height);
+                    ctx.fillStyle = "black"; // 与背景同色
+                    ctx.beginPath();
+                    var indent = 4;
+                    // 绘制要“切掉”的部分（黑色覆盖）
+                    // 形状：左边沿的 > 形切口
+                    ctx.moveTo(0, 0);
+                    ctx.lineTo(indent, height / 2); // 内凹尖点
+                    ctx.lineTo(0, height);
+                    ctx.closePath();
+                    ctx.fill();
+                }
+            }
+
             Text {
                 anchors.centerIn: parent
+                anchors.horizontalCenterOffset: 4
                 text: bottomText
                 font.family: gothicFont.name
-                font.pixelSize: 18
+                font.pixelSize: 16
                 font.bold: true
                 color: "black"
             }
@@ -302,7 +336,7 @@ T.Widget {
             id: bottomRectBackground
 
             width: mainRow.width + 40
-            height: 45
+            height: 35
             color: "transparent"
             anchors.verticalCenter: bottomRect.verticalCenter
             anchors.horizontalCenter: contentWrapper.horizontalCenter
@@ -311,10 +345,14 @@ T.Widget {
 
             Canvas {
                 anchors.fill: parent
+                // 提高纹理质量
+                renderTarget: Canvas.FramebufferObject
                 onPaint: {
                     var ctx = getContext("2d");
+                    ctx.imageSmoothingEnabled = false; // 关闭平滑，防止羽化
                     ctx.clearRect(0, 0, width, height);
                     ctx.fillStyle = "#000000";
+                    // P5R 风格：保持边缘绝对锐利，不使用半透明或平滑
                     ctx.beginPath();
                     var step = 4;
                     var amp = 8;

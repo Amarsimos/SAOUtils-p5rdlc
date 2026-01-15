@@ -103,7 +103,7 @@ NVG.Window {
                         placeholderText: "yyyy/mm/dd"
                         // Initialize and bind text
                         text: {
-                            const date = widget.settings.targetDate ? new Date(widget.settings.targetDate) : new Date();
+                            const date = widget.settings.targetDate ? new Date(widget.settings.targetDate) : new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
                             return Qt.formatDate(date, "yyyy/MM/dd");
                         }
                         onEditingFinished: {

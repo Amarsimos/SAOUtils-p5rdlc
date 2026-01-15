@@ -1,4 +1,4 @@
 {
-  "source": "nvg://p5r.theme.gpbeta.com/widget/date",
-  "settings": "widget-date.xml"
+  "source": "nvg://com.amarsimos.widget.p5rcountdown/widget/p5r-countdown",
+  "settings": "widget-p5rcountdown.xml"
 }
