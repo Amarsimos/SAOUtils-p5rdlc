@@ -1,0 +1,43 @@
+{
+    "name": "com.amarsimos.widget.p5rcountdown",
+    "version": "0.0.1",
+
+    "title": {
+        "en": "P5R style Countdown Widget",
+        "zh": "P5R 倒计时挂件"
+    },
+
+    "description": {
+        "en": "P5R style Countdown Widget\n",
+        "zh": "P5R 倒计时挂件\n"
+    },
+
+    "homepage": "https://moe.amarsioms.top",
+
+
+
+    "bugs": {
+        "email": "amarsimoss@gmail.com",
+        "url": "https://moe.amarsioms.top"
+    },
+
+    "author": {
+        "name": "Amarsimos",
+        "email": "amarsimoss@gmail.com",
+        "url": "https://moe.amarsioms.top"
+    },
+
+    "dependencies": {
+
+    },
+
+    "resources": [
+        {
+            "location": "/widget/p5r-countdown",
+            "catalog": "widget",
+            "title": "P5R 倒计时挂件",
+            "preview": "Presets/widget-p5rcountdown.png",
+            "entry": "qml/CountdownWidget.qml"
+        }
+    ]
+}
