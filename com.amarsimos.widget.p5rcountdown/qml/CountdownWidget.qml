@@ -31,6 +31,10 @@ T.Widget {
     readonly property real textScaleX: 0.85
     // 主标题（可编辑的 Event 文本）的旋转角度；其余固定文字为 -17° 左右
     readonly property real eventTextRotation: -19
+    // 红条高度；黑色笔刷背景比红条宽 40、高 15
+    readonly property real bottomBarHeight: 28
+    // 黑色笔刷背景的实际外框（背景局部坐标），用于画布余量和挂件边距
+    readonly property var brushBounds: pointsBounds(brushStrokes(contentWrapper.bottomBarWidth + 40, bottomBarHeight + 15))
 
     function calculateDaysRemaining() {
         const today = new Date();
@@ -111,11 +115,6 @@ T.Widget {
         }
         return b;
     }
-
-    // 红条高度；黑色笔刷背景比红条宽 40、高 15
-    readonly property real bottomBarHeight: 28
-    // 黑色笔刷背景的实际外框（背景局部坐标），用于画布余量和挂件边距
-    readonly property var brushBounds: pointsBounds(brushStrokes(contentWrapper.bottomBarWidth + 40, bottomBarHeight + 15))
 
     // 主标题每两个字为一组，每组单独旋转、带一条黑色色块
     function getSplitText(text) {
@@ -534,9 +533,9 @@ T.Widget {
                     ctx.clearRect(0, 0, width, height);
                     ctx.fillStyle = "black";
                     ctx.beginPath();
-                    var indent = 4; // 切口深度
+                    var indent = 14; // 切口深度
                     ctx.moveTo(0, 0);
-                    ctx.lineTo(indent, height / 3); // 切口尖点，位于上 1/3 处
+                    ctx.lineTo(indent, height * 2 / 3); // 切口尖点，位于上 2/3 处
                     ctx.lineTo(0, height);
                     ctx.closePath();
                     ctx.fill();
@@ -601,8 +600,7 @@ T.Widget {
                         var pts = strokes[i];
                         ctx.beginPath();
                         ctx.moveTo(pts[0].x, pts[0].y);
-                        for (var j = 1; j < pts.length; j++)
-                            ctx.lineTo(pts[j].x, pts[j].y);
+                        for (var j = 1; j < pts.length; j++) ctx.lineTo(pts[j].x, pts[j].y)
                         ctx.closePath();
                         ctx.fill();
                     }
