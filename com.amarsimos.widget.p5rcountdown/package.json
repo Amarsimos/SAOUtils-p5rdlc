@@ -8,8 +8,8 @@
     },
 
     "description": {
-        "en": "P5R style Countdown Widget\n",
-        "zh": "P5R 倒计时挂件\n"
+        "en": "P5R style countdown widget. Event name, todo message and target date are customizable.\n",
+        "zh": "P5R 风格倒计时挂件，可自定义事件名、待办信息和目标日期。\n"
     },
 
     "homepage": "https://moe.amarsioms.top",

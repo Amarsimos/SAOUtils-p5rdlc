@@ -67,14 +67,14 @@ NVG.Window {
 
                 contentItem: RowLayout {
                     Label {
-                        text: qsTr("Todo Message")
+                        text: qsTr("Target")
                         Layout.fillWidth: true
                         elide: Text.ElideRight
                     }
 
                     TextField {
                         text: widget.settings.bottomText || ""
-                        placeholderText: qsTr("enter your todo message here")
+                        placeholderText: qsTr("enter your target here")
                         Layout.minimumWidth: 200
                         onTextChanged: {
                             if (widget.settings.bottomText !== text)
