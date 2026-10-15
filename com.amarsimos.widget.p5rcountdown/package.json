@@ -1,6 +1,6 @@
 {
     "name": "com.amarsimos.widget.p5rcountdown",
-    "version": "0.0.1",
+    "version": "1.0.0",
 
     "title": {
         "en": "P5R style Countdown Widget",
@@ -8,8 +8,8 @@
     },
 
     "description": {
-        "en": "P5R style countdown widget. Event name, todo message and target date are customizable.\n",
-        "zh": "P5R 风格倒计时挂件，可自定义事件名、待办信息和目标日期。\n"
+        "en": "P5R style countdown widget. Event name, target and target date are customizable.\n",
+        "zh": "P5R 风格倒计时挂件，可自定义事件名、目标和目标日期。\n"
     },
 
     "homepage": "https://moe.amarsioms.top",

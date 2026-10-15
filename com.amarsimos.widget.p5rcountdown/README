@@ -4,6 +4,30 @@ A countdown widget in the style of Persona 5 Royal.
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-10-15
+
+### Added
+
+- Brush-stroke style black background behind the bottom bar, with a fixed shape that only stretches with the text length
+- Hollow parts of glyphs (e.g. "P", "G", "日") are now filled with black inside the outline
+
+### Changed
+
+- The widget size now fits its content instead of using large fixed margins
+- The bottom bar has a minimum width; longer text first grows leftward within it, and the bar only extends once the text is longer
+- All text is horizontally condensed and bolder; the event title is tilted at -19°
+- "距离", "还剩" and the day digits are smaller; "日" is resized to match
+- The bottom bar is taller and slightly raised relative to the text
+- Renamed the "Todo Message" setting to "Target" (existing values are kept)
+
+### Fixed
+
+- Black outline of rotated text being cut off by a square boundary
+- Outline radius setting being capped by the shader loop limit
+- Jagged edges on the outline and on rotated rectangles
+- Rotated labels looking italic after being condensed
+- Widget content being shifted and clipped by leftover layout offsets
+
 ## [0.0.1] - 2026-01-15
 
 ### Added
